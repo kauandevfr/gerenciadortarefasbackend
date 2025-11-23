@@ -4,7 +4,10 @@ const validateError = require("../utils/validateError");
 const listTasks = async (req, res) => {
     const { id } = req.user;
     try {
-        const tasks = await knex('tasks').where({ user_id: id });
+        const tasks = await knex('tasks')
+            .where({ user_id: id })
+            .orderBy('createdat', 'desc');
+
         return res.status(200).json(tasks)
     } catch (error) {
         return validateError(error, res)
