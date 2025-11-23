@@ -23,11 +23,14 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     const { email, password } = req.body
     try {
-        const user = await knex('users').where({ email }).first();
+        const normalizedEmail = email.trim().toLowerCase();
+        const user = await knex('users')
+            .whereRaw('LOWER(email) = ?', [normalizedEmail])
+            .first();
         if (!user) {
             return res.status(400).json({
                 message: 'Credenciais inválidas.'
-            })
+            });
         }
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
