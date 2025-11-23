@@ -37,16 +37,14 @@ const loginUser = async (req, res) => {
         };
         const token = jwt.sign({ id: user.id }, process.env.JWT_KEY, { expiresIn: "1d" });
 
-        console.log(token)
-
         res.cookie("access_token", token, {
             httpOnly: true,
-            secure: false,
-            sameSite: "lax",
+            secure: true,
+            sameSite: "strict",
             maxAge: 24 * 60 * 60 * 1000
         });
 
-        return res.status(200).json({})
+        return res.status(200).json({});
 
     } catch (error) {
         return validateError(error, res)
@@ -54,7 +52,6 @@ const loginUser = async (req, res) => {
 }
 
 const logoutUser = (req, res) => {
-
     res.clearCookie("access_token", {
         httpOnly: true,
         secure: true,
@@ -63,7 +60,6 @@ const logoutUser = (req, res) => {
 
     return res.status(200).json({});
 };
-
 
 const updateUser = async (req, res) => {
     const { name, email, currentPassword, newPassword, theme } = req.body;
