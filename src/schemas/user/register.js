@@ -1,6 +1,11 @@
-const joi = require('joi')
+const joi = require('joi');
 
-const loginSchema = joi.object({
+const registerUser = joi.object({
+
+    name: joi.string().trim().required().messages({
+        "any.required": "Nome obrigatório.",
+        "string.empty": "Nome obrigatório.",
+    }),
 
     email: joi.string().trim().required().email().messages({
         "any.required": "Email obrigatório.",
@@ -13,6 +18,6 @@ const loginSchema = joi.object({
         "string.empty": "Senha obrigatória.",
         "string.min": "A senha precisa ter no mínimo 6 caracteres."
     })
-})
+});
 
-module.exports = loginSchema;
+module.exports = registerUser;

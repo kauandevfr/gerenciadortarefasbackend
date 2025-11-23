@@ -1,28 +1,32 @@
 const knex = require("../connections/database");
 const jwt = require("jsonwebtoken");
+const validateError = require('../utils/validateError');
 
 const authentication = async (req, res, next) => {
-    const { authorization } = req.headers;
+    const bearer = req.headers.authorization;
+    const cookieToken = req.cookies?.access_token;
 
-    if (!authorization) {
-        return res.status(401).json({ mensagem: 'Não autorizado' });
+    console.log(req.cookies)
+
+    const token = cookieToken || (bearer && bearer.split(" ")[1]);
+
+    if (!token) {
+        return res.status(401).json({ message: "Acesso negado" });
     }
-
-    const token = authorization.split(' ')[1]
 
     try {
         const { id } = jwt.verify(token, process.env.JWT_KEY);
 
-        const user = await knex('users').where({ id }).first();
-
-        if (!user) { return res.status(401).json('Não autorizado') };
+        const user = await knex("users").where({ id }).first();
+        if (!user) {
+            return res.status(401).json({ message: "Acesso negado" });
+        }
 
         req.user = user;
-
         next();
     } catch (error) {
-        return res.status(401).json({ middleware_error: error.message });
-    };
+        return validateError(error, res);
+    }
 };
 
 module.exports = authentication;
