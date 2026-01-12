@@ -27,6 +27,7 @@ const loginUser = async (req, res) => {
         const user = await knex('users')
             .whereRaw('LOWER(email) = ?', [normalizedEmail])
             .first();
+
         if (!user) {
             return res.status(400).json({
                 message: 'Credenciais inválidas.'
@@ -43,7 +44,7 @@ const loginUser = async (req, res) => {
         res.cookie("access_token", token, {
             httpOnly: true,
             secure: true,
-            sameSite: "strict",
+            sameSite: "none",
             maxAge: 24 * 60 * 60 * 1000
         });
 
@@ -58,7 +59,7 @@ const logoutUser = (req, res) => {
     res.clearCookie("access_token", {
         httpOnly: true,
         secure: true,
-        sameSite: "strict"
+        sameSite: "none"
     });
 
     return res.status(200).json({});

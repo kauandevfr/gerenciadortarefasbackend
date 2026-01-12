@@ -10,7 +10,7 @@ const ALLOWED_ORIGINS = new Set([
     "http://192.168.0.173:7006",
     "http://172.24.48.1:7006",
     "http://127.0.0.1:7006",
-    "https://gerenciadordetarefas-frontend.el6nxv.easypanel.host"
+    "https://tarefas.kauanrodrigues.com.br"
 ]);
 
 app.use(cors({

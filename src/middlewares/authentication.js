@@ -5,9 +5,6 @@ const validateError = require('../utils/validateError');
 const authentication = async (req, res, next) => {
     const bearer = req.headers.authorization;
     const cookieToken = req.cookies?.access_token;
-
-    console.log(req.cookies)
-
     const token = cookieToken || (bearer && bearer.split(" ")[1]);
 
     if (!token) {
