@@ -4,28 +4,33 @@ const validateError = require("../utils/validateError");
 
 const listTasks = async (req, res) => {
     const { id } = req.user;
+    const { date } = req.query; // pode ser undefined
+    console.log(date)
     try {
-        const tasks = await knex('tasks')
-            .where({ user_id: id })
-            .orderBy('createdat', 'desc');
+        const query = knex("tasks")
+            .where({ user_id: id });
 
-        return res.status(200).json(tasks)
+        if (date) {
+            query.andWhere("createdat", date); // DATE (YYYY-MM-DD)
+        }
+
+        const tasks = await query.orderBy("createdat", "desc");
+
+        return res.status(200).json(tasks);
     } catch (error) {
-        return validateError(error, res)
-    };
+        return validateError(error, res);
+    }
 };
+
 
 const registerTask = async (req, res) => {
     const { id } = req.user;
 
-    console.log("body: " + req.body.createdat)
     try {
         const task = await knex('tasks').insert({
             ...req.body, user_id: id
-            // , createdat: convertToBrazilTimezone(req.body.createdat) 
         }).returning('*');
 
-        console.log("banco: " + task[0].createdat)
         return res.status(202).json(task);
     } catch (error) {
         return validateError(error, res)
