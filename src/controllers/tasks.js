@@ -18,11 +18,11 @@ const listTasks = async (req, res) => {
 const registerTask = async (req, res) => {
     const { id } = req.user;
 
-    console.log(req.body)
+    console.log("body: " + req.body.createdat)
     try {
         const task = await knex('tasks').insert({ ...req.body, user_id: id, createdat: convertToBrazilTimezone(req.body.createdat) }).returning('*');
 
-        console.log(task)
+        console.log("banco: " + task[0].createdat)
         return res.status(202).json(task);
     } catch (error) {
         return validateError(error, res)
