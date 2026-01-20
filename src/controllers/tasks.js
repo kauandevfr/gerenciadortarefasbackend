@@ -20,7 +20,10 @@ const registerTask = async (req, res) => {
 
     console.log("body: " + req.body.createdat)
     try {
-        const task = await knex('tasks').insert({ ...req.body, user_id: id, createdat: convertToBrazilTimezone(req.body.createdat) }).returning('*');
+        const task = await knex('tasks').insert({
+            ...req.body, user_id: id
+            // , createdat: convertToBrazilTimezone(req.body.createdat) 
+        }).returning('*');
 
         console.log("banco: " + task[0].createdat)
         return res.status(202).json(task);
