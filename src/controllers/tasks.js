@@ -17,6 +17,8 @@ const listTasks = async (req, res) => {
 
 const registerTask = async (req, res) => {
     const { id } = req.user;
+
+    console.log(req.body)
     try {
         const task = await knex('tasks').insert({ ...req.body, user_id: id, createdat: convertToBrazilTimezone(req.body.createdat) }).returning('*');
 
