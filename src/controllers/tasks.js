@@ -4,14 +4,19 @@ const validateError = require("../utils/validateError");
 
 const listTasks = async (req, res) => {
     const { id } = req.user;
-    const { date } = req.query; // pode ser undefined
-    console.log(date)
+    const { date } = req.query;
+
     try {
         const query = knex("tasks")
             .where({ user_id: id });
 
-        if (date) {
-            query.andWhere("createdat", date); // DATE (YYYY-MM-DD)
+        if (
+            date &&
+            date !== "null" &&
+            date !== "undefined" &&
+            /^\d{4}-\d{2}-\d{2}$/.test(date)
+        ) {
+            query.andWhere("createdat", date);
         }
 
         const tasks = await query.orderBy("createdat", "desc");
