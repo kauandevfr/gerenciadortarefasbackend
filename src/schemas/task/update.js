@@ -1,14 +1,13 @@
 const joi = require('joi');
 
-const addTaskSchema = joi.object({
+const updateTaskSchema = joi.object({
     title: joi
         .string()
         .trim()
         .pattern(/[A-Za-z0-9]/)
-        .required()
+        .optional()
         .messages({
-            "any.required": "Título obrigatório.",
-            "string.empty": "Título obrigatório.",
+            "string.empty": "Título não pode ser vazio.",
             "string.pattern.base": "O título precisa conter ao menos uma letra ou número."
         }),
 
@@ -18,32 +17,30 @@ const addTaskSchema = joi.object({
         .optional()
         .allow('')
         .messages({
+            "string.empty": "Descrição não pode ser vazia.",
         }),
 
     createdat: joi
         .date()
-        .required()
+        .optional()
         .messages({
-            "any.required": "Data de criação obrigatória.",
             "date.base": "Data inválida."
         }),
 
     priority: joi
         .string()
         .valid('alta', 'média', 'baixa')
-        .required()
+        .optional()
         .messages({
-            "any.required": "Prioridade obrigatória.",
             "any.only": "Prioridade inválida."
         }),
 
     completed: joi
         .boolean()
-        .required()
+        .optional()
         .messages({
-            "any.required": "Estado obrigatório.",
             "boolean.base": "O estado só pode ser verdadeiro ou falso."
         })
 });
 
-module.exports = addTaskSchema;
+module.exports = updateTaskSchema;

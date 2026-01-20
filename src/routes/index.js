@@ -23,7 +23,8 @@ const loginSchema = require('../schemas/user/login');
 const updateUserSchema = require('../schemas/user/update');
 const registerUserSchema = require('../schemas/user/register');
 
-const taskSchema = require('../schemas/task/add')
+const addTaskSchema = require('../schemas/task/add');
+const updateTaskSchema = require('../schemas/task/update');
 
 routes.post('/user/login', validateRequest(loginSchema), loginUser);
 routes.post('/user/register', validateRequest(registerUserSchema), registerUser);
@@ -36,8 +37,8 @@ routes.delete('/user', deleteUser);
 routes.put('/user', validateRequest(updateUserSchema), updateUser);
 
 routes.get('/tasks', listTasks);
-routes.post('/task', validateRequest(taskSchema), registerTask);
-routes.put('/task/:id', validateRequest(taskSchema), updateTask);
+routes.post('/task', validateRequest(addTaskSchema), registerTask);
+routes.put('/task/:id', validateRequest(updateTaskSchema), updateTask);
 routes.delete('/task/:id', deleteTask)
 
 module.exports = routes;

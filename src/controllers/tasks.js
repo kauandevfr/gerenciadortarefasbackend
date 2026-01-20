@@ -1,4 +1,5 @@
 const knex = require("../connections/database");
+const convertToBrazilTimezone = require("../utils/toBrazilTimezone");
 const validateError = require("../utils/validateError");
 
 const listTasks = async (req, res) => {
@@ -15,10 +16,9 @@ const listTasks = async (req, res) => {
 };
 
 const registerTask = async (req, res) => {
-    const { description, completed } = req.body;
     const { id } = req.user;
     try {
-        const task = await knex('tasks').insert({ description, completed, user_id: id }).returning('*');
+        const task = await knex('tasks').insert({ ...req.body, user_id: id, createdat: convertToBrazilTimezone(req.body.createdat) }).returning('*');
         return res.status(202).json(task);
     } catch (error) {
         return validateError(error, res)
@@ -26,16 +26,26 @@ const registerTask = async (req, res) => {
 };
 
 const updateTask = async (req, res) => {
-    const { description, completed } = req.body;
     const { id } = req.params;
-    const { user } = req
+    const { user } = req;
+
     try {
-        await knex('tasks').update({ description, completed }).where({ id, user_id: user.id });
+        const updateData = { ...req.body };
+
+        if (req.body.createdat) {
+            updateData.createdat = new Date(req.body.createdat).toISOString().slice(0, 10);
+        }
+
+        await knex('tasks')
+            .update(updateData)
+            .where({ id, user_id: user.id });
+
         return res.status(204).json({});
     } catch (error) {
-        return validateError(error, res)
-    };
+        return validateError(error, res);
+    }
 };
+
 
 const deleteTask = async (req, res) => {
     const { id } = req.params;
