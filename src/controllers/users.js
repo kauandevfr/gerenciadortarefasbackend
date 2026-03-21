@@ -174,7 +174,13 @@ const deleteAvatar = async (req, res) => {
 
         if (avatar) {
             const filePath = path.join(process.cwd(), "src", "assets", "avatar", path.basename(avatar));
-            if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+            try {
+                await fs.unlink(filePath);
+            } catch (err) {
+                if (err.code !== "ENOENT") {
+                    console.error("Erro ao excluir avatar:", err);
+                }
+            }
         }
 
         await knex("users").where({ id }).update({ avatar: null });
