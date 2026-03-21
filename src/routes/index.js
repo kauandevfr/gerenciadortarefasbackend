@@ -10,7 +10,8 @@ const {
     deleteUser,
     listUser,
     logoutUser,
-    uploadAvatar
+    uploadAvatar,
+    deleteAvatar
 } = require('../controllers/users');
 
 const {
