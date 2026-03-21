@@ -42,7 +42,7 @@ app.set("trust proxy", 1);
 app.use(cookieParser());
 app.use(express.json());
 
-app.use("/assets", express.static(path.join(process.cwd(), "src", "assets"), {
+app.use("/assets", express.static(path.join(__dirname, "src", "assets"), {
     maxAge: "365d",
     immutable: true
 }));
