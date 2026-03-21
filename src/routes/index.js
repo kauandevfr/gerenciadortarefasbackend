@@ -9,7 +9,8 @@ const {
     updateUser,
     deleteUser,
     listUser,
-    logoutUser
+    logoutUser,
+    uploadAvatar
 } = require('../controllers/users');
 
 const {
@@ -18,6 +19,9 @@ const {
     updateTask,
     deleteTask
 } = require('../controllers/tasks');
+
+const multer = require('multer');
+const upload = multer({})
 
 const loginSchema = require('../schemas/user/login');
 const updateUserSchema = require('../schemas/user/update');
@@ -34,6 +38,7 @@ routes.use(authentication)
 routes.get('/user', listUser);
 routes.post('/user/logout', logoutUser);
 routes.delete('/user', deleteUser);
+routes.put("/user/avatar", upload.single('avatar'), uploadAvatar)
 routes.put('/user', validateRequest(updateUserSchema), updateUser);
 
 routes.get('/tasks', listTasks);

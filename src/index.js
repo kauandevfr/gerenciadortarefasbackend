@@ -2,8 +2,11 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const routes = require('./routes')
+const path = require("path");
 
 const app = express();
+
+
 
 const ALLOWED_ORIGINS = new Set([
     "http://localhost:7006",
@@ -39,6 +42,13 @@ app.set("trust proxy", 1);
 app.use(cookieParser());
 app.use(express.json());
 
+app.use("/assets", express.static(path.join(process.cwd(), "src", "assets"), {
+    maxAge: "365d",
+    immutable: true
+}));
+
 app.use(routes)
+
+
 
 app.listen(process.env.PORT, "0.0.0.0");

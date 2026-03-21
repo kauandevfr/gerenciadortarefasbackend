@@ -2,6 +2,9 @@ const knex = require("../connections/database");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const validateError = require("../utils/validateError");
+const path = require("path");
+const fs = require("fs/promises");
+const sharp = require("sharp");
 
 const registerUser = async (req, res) => {
     const { name, email, password } = req.body;
@@ -43,8 +46,8 @@ const loginUser = async (req, res) => {
 
         res.cookie("access_token", token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
+            secure: false,
+            sameSite: "lax",
             maxAge: 24 * 60 * 60 * 1000
         });
 
@@ -58,8 +61,8 @@ const loginUser = async (req, res) => {
 const logoutUser = (req, res) => {
     res.clearCookie("access_token", {
         httpOnly: true,
-        secure: true,
-        sameSite: "none"
+        secure: false,
+        sameSite: "lax"
     });
 
     return res.status(200).json({});
@@ -68,6 +71,7 @@ const logoutUser = (req, res) => {
 const updateUser = async (req, res) => {
     const { name, email, currentPassword, newPassword, theme } = req.body;
     const { user } = req;
+
     const updateData = {};
     try {
         if (newPassword) {
@@ -125,4 +129,44 @@ const listUser = async (req, res) => {
     return res.status(200).json(req.user)
 };
 
-module.exports = { registerUser, loginUser, updateUser, deleteUser, listUser, logoutUser }
+const uploadAvatar = async (req, res) => {
+    const avatar = req.file
+    const { user } = req
+
+    try {
+        if (!avatar) {
+            return res.status(400).json({
+                status: "error",
+                message: "O arquivo de avatar é obrigatório.",
+                code: "AVATAR_REQUIRED",
+            });
+        }
+        if (user.avatar) {
+            const oldPath = path.join(process.cwd(), "src", user.avatar);
+            try {
+                await fs.unlink(oldPath);
+            } catch (err) {
+                if (err.code !== "ENOENT") {
+                    console.error("Erro ao excluir avatar antigo:", err);
+                }
+            }
+        }
+        const dir = path.join(process.cwd(), "src", "assets", "avatar");
+        await fs.mkdir(dir, { recursive: true });
+        const filename = `${req.user.id}-${Date.now()}.webp`;
+        const outPath = path.join(dir, filename);
+        const buffer = await sharp(avatar.buffer)
+            .rotate()
+            .webp({ quality: 82 })
+            .toBuffer();
+        await fs.writeFile(outPath, buffer);
+        const publicUrl = `https://tarefasapi.kauanrodrigues.com.br/assets/avatar/${filename}`;
+        await knex("users").where({ id: req.user.id }).update({ avatar: publicUrl });
+        return res.status(200).json({ avatar: publicUrl })
+    } catch (error) {
+        validateError(error, res)
+    }
+}
+
+
+module.exports = { registerUser, loginUser, updateUser, deleteUser, listUser, logoutUser, uploadAvatar }
