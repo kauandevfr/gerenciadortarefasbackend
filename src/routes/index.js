@@ -46,4 +46,6 @@ routes.post('/task', validateRequest(addTaskSchema), registerTask);
 routes.put('/task/:id', validateRequest(updateTaskSchema), updateTask);
 routes.delete('/task/:id', deleteTask)
 
+routes.delete("/user/avatar", deleteAvatar)
+
 module.exports = routes;

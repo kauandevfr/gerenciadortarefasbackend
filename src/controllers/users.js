@@ -168,5 +168,20 @@ const uploadAvatar = async (req, res) => {
     }
 }
 
+const deleteAvatar = async (req, res) => {
+    try {
+        const { id, avatar } = req.user;
 
-module.exports = { registerUser, loginUser, updateUser, deleteUser, listUser, logoutUser, uploadAvatar }
+        if (avatar) {
+            const filePath = path.join(process.cwd(), "src", "assets", "avatar", path.basename(avatar));
+            if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+        }
+
+        await knex("users").where({ id }).update({ avatar: null });
+
+        return res.status(200).json({ message: "Foto removida com sucesso." });
+    } catch (err) {
+        return validateError(err, res);
+    }
+}
+module.exports = { deleteAvatar, registerUser, loginUser, updateUser, deleteUser, listUser, logoutUser, uploadAvatar }
