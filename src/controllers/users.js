@@ -46,8 +46,8 @@ const loginUser = async (req, res) => {
 
         res.cookie("access_token", token, {
             httpOnly: true,
-            secure: false,
-            sameSite: "lax",
+            secure: true,        // 👈 sempre true em produção (exige HTTPS)
+            sameSite: "strict",  // 👈 mais seguro que lax em produção
             maxAge: 24 * 60 * 60 * 1000
         });
 
@@ -160,7 +160,7 @@ const uploadAvatar = async (req, res) => {
             .webp({ quality: 82 })
             .toBuffer();
         await fs.writeFile(outPath, buffer);
-        const publicUrl = `https://tarefasapi.kauanrodrigues.com.br/assets/avatar/${filename}`;
+        const publicUrl = `http://tarefasapi.kauanrodrigues.com.br/assets/avatar/${filename}`;
         await knex("users").where({ id: req.user.id }).update({ avatar: publicUrl });
         return res.status(200).json({ avatar: publicUrl })
     } catch (error) {
