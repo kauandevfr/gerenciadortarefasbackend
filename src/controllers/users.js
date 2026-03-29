@@ -163,7 +163,7 @@ const uploadAvatar = async (req, res) => {
             .webp({ quality: 82 })
             .toBuffer();
         await fs.writeFile(outPath, buffer);
-        const publicUrl = `http://tarefasapi.kauanrodrigues.com.br/assets/avatar/${filename}`;
+        const publicUrl = `https://tarefasapi.kauanrodrigues.com.br/assets/avatar/${filename}`;
         await knex("users").where({ id: req.user.id }).update({ avatar: publicUrl });
         return res.status(200).json({ avatar: publicUrl })
     } catch (error) {
