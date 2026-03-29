@@ -44,10 +44,13 @@ const loginUser = async (req, res) => {
         };
         const token = jwt.sign({ id: user.id }, process.env.JWT_KEY, { expiresIn: "1d" });
 
+        const isProd = process.env.NODE_ENV === 'production';
+
         res.cookie("access_token", token, {
             httpOnly: true,
-            secure: true,        // 👈 sempre true em produção (exige HTTPS)
-            sameSite: "strict",  // 👈 mais seguro que lax em produção
+            secure: isProd,
+            sameSite: isProd ? "none" : "lax", // 👈 none para cross-domain
+            domain: isProd ? ".kauanrodrigues.com.br" : undefined, // 👈 compartilha entre subdomínios
             maxAge: 24 * 60 * 60 * 1000
         });
 
