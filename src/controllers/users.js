@@ -64,8 +64,9 @@ const loginUser = async (req, res) => {
 const logoutUser = (req, res) => {
     res.clearCookie("access_token", {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax"
+        secure: isProd,
+        sameSite: isProd ? "none" : "lax",
+        domain: isProd ? ".kauanrodrigues.com.br" : undefined,
     });
 
     return res.status(200).json({});
