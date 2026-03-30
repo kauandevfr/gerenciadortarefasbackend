@@ -30,7 +30,7 @@ const addTaskSchema = joi.object({
 
     priority: joi
         .string()
-        .valid('alta', 'média', 'baixa')
+        .valid('high', 'medium', 'low')
         .required()
         .messages({
             "any.required": "Prioridade obrigatória.",
