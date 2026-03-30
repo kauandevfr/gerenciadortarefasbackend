@@ -29,7 +29,7 @@ const updateTaskSchema = joi.object({
 
     priority: joi
         .string()
-        .valid('alta', 'média', 'baixa')
+        .valid('high', 'medium', 'low')
         .optional()
         .messages({
             "any.only": "Prioridade inválida."
