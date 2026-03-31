@@ -49,8 +49,8 @@ const loginUser = async (req, res) => {
         res.cookie("access_token", token, {
             httpOnly: true,
             secure: isProd,
-            sameSite: isProd ? "none" : "lax", // 👈 none para cross-domain
-            domain: isProd ? ".kauanrodrigues.com.br" : undefined, // 👈 compartilha entre subdomínios
+            sameSite: isProd ? "none" : "lax",
+            domain: isProd ? ".kauanrodrigues.com.br" : undefined,
             maxAge: 24 * 60 * 60 * 1000
         });
 
@@ -62,6 +62,8 @@ const loginUser = async (req, res) => {
 }
 
 const logoutUser = (req, res) => {
+    const isProd = process.env.NODE_ENV === 'production';
+
     res.clearCookie("access_token", {
         httpOnly: true,
         secure: isProd,
