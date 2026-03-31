@@ -19,6 +19,8 @@ const authentication = async (req, res, next) => {
             return res.status(401).json({ message: "Acesso negado" });
         }
 
+
+        delete user.password
         req.user = user;
         next();
     } catch (error) {
