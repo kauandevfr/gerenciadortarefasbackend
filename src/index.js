@@ -9,6 +9,7 @@ const app = express();
 
 
 const ALLOWED_ORIGINS = new Set([
+    "http://192.168.0.135",
     "http://localhost:7006",
     "http://localhost:5173",
     "http://192.168.0.173:7006",
